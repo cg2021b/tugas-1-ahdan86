@@ -13,7 +13,7 @@ function main() {
     gl = canvas.getContext("experimental-webgl");
   }
 
-  const vertices = [
+  const verticesKanan = [
     //Bohlam Atas
     0.5819007534833, 0.1926267779086, 0.60, 0.64, 0.69, //Kurva 0
     0.6326752816401, 0.2075919019969, 0.60, 0.64, 0.69, //Kurva 1
@@ -192,6 +192,42 @@ function main() {
 
   ];
 
+  const verticesKiri = [
+    
+    //Ulir Besi
+    -0.5424744083643, -0.1834130803293, 0.0, 0.0, 0.0, //U
+    -0.5139687575529, -0.1811281432281, 0.0, 0.0, 0.0, //U1
+    -0.4812389955158, -0.1684585579234, 0.0, 0.0, 0.0, //U2
+    -0.4585393218449, -0.1473425824156, 0.0, 0.0, 0.0, //U3
+    -0.4432302396017, -0.1272824056831, 0.7215, 0.702, 0.678, //U4
+    -0.435839648174, -0.1093338265015, 0.7215, 0.702, 0.678, //U5
+    -0.4326722518478, -0.0850504546675, 0.7215, 0.702, 0.678, //U6
+    -0.4332001512355, -0.0649902779351, 0.7215, 0.702, 0.678, //U7
+    -0.4324718719941, -0.0446676913863, 0.7215, 0.702, 0.678, //U8
+    -0.4316164530724, -0.0222304275317, 0.7215, 0.702, 0.678, //U9
+    -0.4311704147425, -0.0057841644365, 0.7215, 0.702, 0.678, //U10
+    -0.4396601466043, 0.0110414368426, 0.7215, 0.702, 0.678, //U11
+    -0.4509579160278, 0.0290909934708, 0.7215, 0.702, 0.678, //U12
+    -0.473545541608, 0.0480851331632, 0.7215, 0.702, 0.678, //U13
+    -0.4979794622199, 0.0625877138715, 0.7215, 0.702, 0.678, //U14
+    -0.5317342489502, 0.069236383985, 0.7215, 0.702, 0.678, //U15
+    -0.5685576526559, 0.0641220223592, 0.7215, 0.702, 0.678, //U16
+    -0.5905494076468, 0.0533818629451, 0.7215, 0.702, 0.678, //U17
+    -0.6115182903126, 0.0380387780677, 0.7215, 0.702, 0.678, //U18
+    -0.6283956836777, 0.0129784061013, 0.7215, 0.702, 0.678, //U19
+    -0.6381129707667, -0.0125934020277, 0.7215, 0.702, 0.678, //U20
+    -0.6401587154171, -0.0315165400432, 0.0, 0.0, 0.0, //U21
+    -0.6437387685551, -0.0586226566599, 0.0, 0.0, 0.0, //U22
+    -0.6442502047177, -0.0872630817644, 0.0, 0.0, 0.0, //U23
+    -0.6381129707667, -0.1123234537308, 0.0, 0.0, 0.0, //U24
+    -0.6319757368158, -0.1322694640714, 0.0, 0.0, 0.0, //U25
+    -0.6217470135642, -0.1465896766236, 0.0, 0.0, 0.0, //U26
+    -0.6053810563616, -0.1614213253384, 0.0, 0.0, 0.0, //U27
+    -0.5859464821836, -0.1736957932403, 0.0, 0.0, 0.0, //U28
+    -0.5654890356804, -0.1818787718416, 0.0, 0.0, 0.0, //U29
+  ];
+
+  const vertices = [...verticesKanan, ...verticesKiri];
   // Buat buffer untuk LinkedList tempat penyimpanan sementara sebelum titik digambar
   var buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -203,9 +239,9 @@ function main() {
       attribute vec2 aPosition;
       attribute vec3 aColor;
       varying vec3 vColor;
-      uniform float uChanged;
+      uniform mat4 uChanged;
       void main(){
-          gl_Position = vec4(aPosition.x,aPosition.y + uChanged, 0.0, 1.0);
+          gl_Position = uChanged * vec4(aPosition, 0.0, 1.0);
           vColor = aColor;
       }
     `;
@@ -268,14 +304,34 @@ function main() {
   function render() {
     if (change >= 0.8 || change < -0.8) speed = -speed;
     change += speed;
-    gl.uniform1f(uChange, change);
+    const kiri = [
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1,
+		]
+		
+		const kanan = [
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, change, 0, 1,
+		]
+
 
     gl.clearColor(0, 0.529, 0.658, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    //Vertices Kanan
+    gl.uniformMatrix4fv(uChange, false, kanan);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 26);
     gl.drawArrays(gl.TRIANGLE_FAN, 26, 50);
     gl.drawArrays(gl.TRIANGLE_FAN, 76, 64);
     gl.drawArrays(gl.TRIANGLE_FAN, 140, 20);
+    
+    //Vertices Kiri
+    gl.uniformMatrix4fv(uChange, false, kiri);
+    gl.drawArrays(gl.TRIANGLES, 160, 30);
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
