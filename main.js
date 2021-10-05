@@ -135,6 +135,10 @@ function main() {
     gl.drawArrays(gl.TRIANGLES, 160, 90);
     gl.drawArrays(gl.TRIANGLE_FAN, 261, 24);
     gl.drawArrays(gl.TRIANGLE_FAN, 250, 11);
+    gl.drawArrays(gl.LINE_STRIP, 370, 12);
+    gl.drawArrays(gl.LINE_STRIP, 382, 11);
+    gl.drawArrays(gl.LINE_STRIP, 393, 12);
+    // gl.drawArrays(gl.LINE_LOOP, 405, 13);
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
