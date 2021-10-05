@@ -51,7 +51,6 @@ function main() {
     console.error("ERROR compiling vertex shader!", gl.getShaderInfoLog(vertexShader));
     return;
   }
-
   gl.compileShader(fragmentShader);
   if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
     console.error("ERROR compiling fragment shader!", gl.getShaderInfoLog(fragmentShader));
@@ -76,11 +75,25 @@ function main() {
 
   //Dapatkan lokasi positon dari shader untuk diolah
   var aPosition = gl.getAttribLocation(shaderProgram, "aPosition");
-  gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+  gl.vertexAttribPointer(
+    aPosition, 
+    2, 
+    gl.FLOAT, 
+    gl.FALSE, 
+    5 * Float32Array.BYTES_PER_ELEMENT,
+    0
+  );
   gl.enableVertexAttribArray(aPosition);
 
   var aColor = gl.getAttribLocation(shaderProgram, "aColor");
-  gl.vertexAttribPointer(aColor, 3, gl.FLOAT, gl.FALSE, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+  gl.vertexAttribPointer(
+      aColor, 
+      3, 
+      gl.FLOAT, 
+      gl.FALSE, 
+      5 * Float32Array.BYTES_PER_ELEMENT, 
+      2 * Float32Array.BYTES_PER_ELEMENT
+  );
   gl.enableVertexAttribArray(aColor);
 
   //Waktunya NGGAMBARR
@@ -117,6 +130,8 @@ function main() {
     
     //Vertices Kiri
     gl.uniformMatrix4fv(uChange, false, kiri);
+    gl.drawArrays(gl.TRIANGLE_FAN, 332, 30);
+    gl.drawArrays(gl.TRIANGLE_FAN, 280, 52);
     gl.drawArrays(gl.TRIANGLES, 160, 87);
     gl.drawArrays(gl.TRIANGLE_FAN, 256, 24);
     gl.drawArrays(gl.TRIANGLE_FAN, 247, 9);
