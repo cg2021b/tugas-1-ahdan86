@@ -130,11 +130,11 @@ function main() {
     
     //Vertices Kiri
     gl.uniformMatrix4fv(uChange, false, kiri);
-    gl.drawArrays(gl.TRIANGLE_FAN, 332, 30);
-    gl.drawArrays(gl.TRIANGLE_FAN, 280, 52);
-    gl.drawArrays(gl.TRIANGLES, 160, 87);
-    gl.drawArrays(gl.TRIANGLE_FAN, 256, 24);
-    gl.drawArrays(gl.TRIANGLE_FAN, 247, 9);
+    gl.drawArrays(gl.TRIANGLE_FAN, 337, 33);
+    gl.drawArrays(gl.TRIANGLE_FAN, 285, 52);
+    gl.drawArrays(gl.TRIANGLES, 160, 90);
+    gl.drawArrays(gl.TRIANGLE_FAN, 261, 24);
+    gl.drawArrays(gl.TRIANGLE_FAN, 250, 11);
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
