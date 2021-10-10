@@ -2,7 +2,7 @@ import * as THREE from "./node_modules/three/src/Three.js";
 import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitControls.js";
 import { GUI } from "./node_modules/dat.gui/build/dat.gui.module.js";
 
-let scene, camera, renderer, controls, canvas, cube, gui;
+let scene, camera, renderer, controls, canvas, cube, ball, cone;
 
 let createPlane = function () {
   const planeSize = 40;
@@ -27,10 +27,38 @@ let createPlane = function () {
 let createCube = function () {
   const cubeSize = 4;
   const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-  const cubeMat = new THREE.MeshPhongMaterial({ color: "#8AC" });
+  const cubeMat = new THREE.MeshBasicMaterial({ color: "rgb(52, 235, 76)" });
+  cubeMat.flatShading = true;
   cube = new THREE.Mesh(cubeGeo, cubeMat);
   cube.position.set(0, 5, 0);
   scene.add(cube);
+};
+
+let createBall = function () {
+  const radius = 3;
+  const detail = 3;
+  const ballGeo = new THREE.DodecahedronGeometry(radius, detail);
+  const ballMat = new THREE.MeshPhongMaterial({
+    color: "rgb(235, 46, 21)",
+    flatShading: true,
+    shininess: 150,
+  });
+  ball = new THREE.Mesh(ballGeo, ballMat);
+  ball.position.set(-10, 5, -10);
+  scene.add(ball);
+};
+
+let createCone = function () {
+  const radius = 3;
+  const height = 3;
+  const radialSegments = 10;
+  const coneGeo = new THREE.ConeGeometry(radius, height, radialSegments);
+  const coneMat = new THREE.MeshLambertMaterial({
+    color: "rgb(215, 18, 222)",
+  });
+  cone = new THREE.Mesh(coneGeo, coneMat);
+  cone.position.set(10, 5, 10);
+  scene.add(cone);
 };
 
 // set up the environment - // initiallize scene, camera, objects and renderer
@@ -60,16 +88,24 @@ let init = function () {
   // 3. Create Lighting and GUI for Lighting
   const color = 0xffffff;
   const intensity = 1;
-  const light = new THREE.AmbientLight(color, intensity);
+  const light = new THREE.DirectionalLight(color, intensity);
+  light.position.set(0, 10, 0);
+  light.target.position.set(-5, 0, 0);
   scene.add(light);
+  scene.add(light.target);
 
   const gui = new GUI();
   gui.addColor(new ColorGUIHelper(light, "color"), "value").name("color");
   gui.add(light, "intensity", 0, 2, 0.01);
+  gui.add(light.target.position, "x", -10, 10);
+  gui.add(light.target.position, "z", -10, 10);
+  gui.add(light.target.position, "y", 0, 10);
 
   // 4. Make a Plane and Shapes
   createPlane();
   createCube();
+  createBall();
+  createCone();
 
   // 5. Create the Renderer
   renderer.setSize(750, 550);
@@ -92,6 +128,15 @@ class ColorGUIHelper {
 // main animation loop - calls 50-60 in a second.
 let speed = 0.01;
 let mainLoop = function () {
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+
+  ball.rotation.x += 0.01;
+  ball.rotation.y += 0.01;
+
+  cone.rotation.x += 0.01;
+  cone.rotation.y += 0.01;
+
   renderer.render(scene, camera);
   requestAnimationFrame(mainLoop);
 }; ///////////////////////////////////////////////
