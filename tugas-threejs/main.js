@@ -59,6 +59,12 @@ let createCone = function () {
   cone = new THREE.Mesh(coneGeo, coneMat);
   cone.position.set(10, 5, 10);
   scene.add(cone);
+
+  // wireframe
+  var geo = new THREE.EdgesGeometry(coneGeo); // or WireframeGeometry
+  var mat = new THREE.LineBasicMaterial({ color: "rgb(19, 247, 7)" });
+  var wireframe = new THREE.LineSegments(geo, mat);
+  cone.add(wireframe);
 };
 
 // set up the environment - // initiallize scene, camera, objects and renderer
