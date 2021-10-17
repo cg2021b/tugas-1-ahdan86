@@ -7,7 +7,7 @@ let camera, renderer, canvas, scene, cube, controls, raycast, mouse;
 
 let currColor = "";
 let currObj = {};
-const jumlahCube = 20;
+const jumlahCube = 50;
 let countCube = 0;
 
 const score = document.querySelector("#score");
@@ -68,14 +68,6 @@ let init = function () {
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.position.set(0, 10, 20);
 
-    //Add Control (+Orbit Control)
-    // const pointLock = new PointerLockControls(camera, document.body);
-    // pointLock.addEventListener("lock", function () {
-    //     // menu.style.display = 'none';
-    // });
-    // pointLock.addEventListener("unlock", function () {
-    //     // menubar.style.display = 'block';
-    // });
     controls = new OrbitControls(camera, canvas);
     controls.target.set(0, 5, 0);
     controls.update();
@@ -111,6 +103,7 @@ let init = function () {
     createPlane();
 
     //Add Random Cube Object
+    let timeOut = 2000;
     const colors = [0xfc0b03, 0x3dfc03, 0x03f8fc];
     function createCube() {
         setTimeout(function () {
@@ -128,8 +121,10 @@ let init = function () {
                 cube.position.set(rand(-20, 20), 5, rand(-20, 20));
                 scene.add(cube);
                 createCube();
+                timeOut *= 0.95;
+                console.log(timeOut);
             }
-        }, 500);
+        }, timeOut);
     }
     createCube();
     console.log(countCube);
