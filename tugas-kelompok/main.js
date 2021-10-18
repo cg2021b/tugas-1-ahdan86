@@ -187,17 +187,14 @@ let onKeyUp = function (e) {
 };
 
 function collision(x, y, z) {
-    if (x == cubeR.position.x && Math.abs(cubeR.position.z - z) < 5 && aPressed == 1) {
+    if (x == cubeR.position.x && Math.abs(cubeR.position.z - z) < 3 && aPressed == 1) {
         score += 1;
-        aPressed = 0;
         return true;
-    } else if (x == cubeG.position.x && Math.abs(cubeG.position.z - z) < 5 && sPressed == 1) {
+    } else if (x == cubeG.position.x && Math.abs(cubeG.position.z - z) < 3 && sPressed == 1) {
         score += 1;
-        sPressed = 0;
         return true;
-    } else if (x == cubeB.position.x && Math.abs(cubeB.position.z - z) < 5 && dPressed == 1) {
+    } else if (x == cubeB.position.x && Math.abs(cubeB.position.z - z) < 3 && dPressed == 1) {
         score += 1;
-        dPressed = 0;
         return true;
     }
 }
@@ -210,7 +207,7 @@ function mainLoop() {
         if (o.position.z >= 5 || status) {
             scene.remove(o);
             object.splice(index, 1);
-            objectMiss += 1;
+            if (!status) objectMiss += 1;
         }
     });
 
@@ -220,8 +217,10 @@ function mainLoop() {
 
     if (objectMiss > 20) gameOver = 1;
     speed += 0.0001;
-    renderer.render(scene, camera);
-    requestAnimationFrame(mainLoop);
+    if (!gameOver) {
+        renderer.render(scene, camera);
+        requestAnimationFrame(mainLoop);
+    }
 }
 
 main();
