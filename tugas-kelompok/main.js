@@ -132,6 +132,7 @@ function main() {
 
     renderer.setSize(innerWidth, innerHeight);
     document.addEventListener("keydown", onKeyDown, false);
+    document.addEventListener("keyup", onKeyUp, false);
     document.body.appendChild(renderer.domElement);
 }
 
@@ -147,8 +148,6 @@ class ColorGUIHelper {
         this.object[this.prop].set(hexString);
     }
 }
-
-function collision(x, y, z) {}
 
 let speed = 0.2;
 
@@ -171,28 +170,56 @@ let onKeyDown = function (e) {
     } else return;
 };
 
+let onKeyUp = function (e) {
+    if (e.keyCode == 65) {
+        // cubeR.material.color.setHex(0xffffff);
+        aPressed = 0;
+        console.log("aUp");
+    } else if (e.keyCode == 83) {
+        // s
+        sPressed = 0;
+        console.log("sUp");
+    } else if (e.keyCode == 68) {
+        // d
+        dPressed = 0;
+        console.log("dUp");
+    } else return;
+};
+
+function collision(x, y, z) {
+    if (x == cubeR.position.x && Math.abs(cubeR.position.z - z) < 5 && aPressed == 1) {
+        score += 1;
+        aPressed = 0;
+        return true;
+    } else if (x == cubeG.position.x && Math.abs(cubeG.position.z - z) < 5 && sPressed == 1) {
+        score += 1;
+        sPressed = 0;
+        return true;
+    } else if (x == cubeB.position.x && Math.abs(cubeB.position.z - z) < 5 && dPressed == 1) {
+        score += 1;
+        dPressed = 0;
+        return true;
+    }
+}
+
 function mainLoop() {
     obj.forEach((o, index, object) => {
-        // collision(o.position.x, o.position.y, o.position.z);
-        if (o.position.x == cubeR.position.x && o.position.x == cubeR.position.z - 3 && aPressed == 1) {
-            scene.remove(o);
-            object.splice(index, 1);
-            score += 1;
-            console.log(score);
-            aPressed = 0;
-        }
+        let status = collision(o.position.x, o.position.y, o.position.z);
 
         o.position.z += speed;
-        if (o.position.z >= 5) {
+        if (o.position.z >= 5 || status) {
             scene.remove(o);
             object.splice(index, 1);
+            objectMiss += 1;
         }
     });
 
     if (obj[obj.length - 1].position.z >= -80) {
         randCube();
     }
-    // speed += 0.1;
+
+    if (objectMiss > 20) gameOver = 1;
+    speed += 0.0001;
     renderer.render(scene, camera);
     requestAnimationFrame(mainLoop);
 }
