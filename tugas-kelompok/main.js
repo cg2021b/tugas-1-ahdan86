@@ -1,17 +1,25 @@
 import * as THREE from "./node_modules/three/src/Three.js";
 import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitControls.js";
-import { GUI } from "./node_modules/dat.gui/build/dat.gui.module.js";
+import { color, GUI } from "./node_modules/dat.gui/build/dat.gui.module.js";
 
-let scene, camera, renderer, canvas, cube;
+let scene, camera, renderer, canvas, cube, cubeR, cubeG, cubeB;
+let obj = [];
+let gameOver = 0,
+    score = 0,
+    objectMiss = 0;
+
 const size = {
     w: window.innerWidth * 0.8,
     h: window.innerHeight * 0.8,
 };
-var lanes = [
-    [-10, 0, -100],
-    [0, 0, -100],
-    [10, 0, -100],
-];
+
+let rand = function (min, max) {
+    if (max === undefined) {
+        max = min;
+        min = 0;
+    }
+    return Math.round(min + (max - min) * Math.random());
+};
 
 function createPlane() {
     const planeSize = 40;
@@ -30,13 +38,48 @@ function createPlane() {
     });
     const plane = new THREE.Mesh(planeGeo, planeMat);
     plane.rotation.x = Math.PI * -0.5;
+    plane.position.set(0, -5, 0);
     scene.add(plane);
 }
 
-function createCube() {
-    cube = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshStandardMaterial({ color: 0xffffff }));
-    pos = radInt(0, 2);
-    cube.position.set(lanes[pos][0], lanes[pos][1], lanes[pos][2]);
+function createCubeRand() {
+    const colors = [0xfc0b03, 0x3dfc03, 0x03f8fc];
+    let colorRad = rand(0, 2);
+    cube = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshStandardMaterial({ color: colors[colorRad] }));
+
+    // let pos = rand(0, 2);
+    // console.log(colorRad);
+    if (colorRad == 0) cube.position.set(-10, 0, -100);
+    else if (colorRad == 1) cube.position.set(0, 0, -100);
+    else if (colorRad == 2) cube.position.set(10, 0, -100);
+    // cube.position.set(lanes[pos][0], lanes[pos][1], lanes[pos][2]);
+    return cube;
+}
+
+function createCube(color, locationX) {
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load("texture.png");
+    const material = new THREE.MeshPhongMaterial({
+        color: color,
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        alphaTest: 0.1,
+    });
+    cube = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), material);
+    cube.position.set(locationX, 0, 0);
+    return cube;
+    // scene.add(cube);
+}
+
+function randCube() {
+    let amt = rand(1, 3);
+    for (let i = 0; i < amt; i++) {
+        cube = createCubeRand();
+        // console.log("Masuk");
+        obj.push(cube);
+        scene.add(cube);
+    }
 }
 
 function main() {
@@ -79,8 +122,16 @@ function main() {
     scene.add(light);
 
     createPlane();
+    randCube();
+    cubeR = createCube(0xfc0b03, -10);
+    cubeG = createCube(0x3dfc03, 0);
+    cubeB = createCube(0x03f8fc, 10);
+    scene.add(cubeR);
+    scene.add(cubeG);
+    scene.add(cubeB);
 
     renderer.setSize(innerWidth, innerHeight);
+    document.addEventListener("keydown", onKeyDown, false);
     document.body.appendChild(renderer.domElement);
 }
 
@@ -97,7 +148,51 @@ class ColorGUIHelper {
     }
 }
 
+function collision(x, y, z) {}
+
+let speed = 0.2;
+
+let aPressed = 0,
+    sPressed = 0,
+    dPressed = 0;
+let onKeyDown = function (e) {
+    if (e.keyCode == 65) {
+        // cubeR.material.color.setHex(0xffffff);
+        aPressed = 1;
+        console.log("a");
+    } else if (e.keyCode == 83) {
+        // s
+        sPressed = 1;
+        console.log("s");
+    } else if (e.keyCode == 68) {
+        // d
+        dPressed = 1;
+        console.log("d");
+    } else return;
+};
+
 function mainLoop() {
+    obj.forEach((o, index, object) => {
+        // collision(o.position.x, o.position.y, o.position.z);
+        if (o.position.x == cubeR.position.x && o.position.x == cubeR.position.z - 3 && aPressed == 1) {
+            scene.remove(o);
+            object.splice(index, 1);
+            score += 1;
+            console.log(score);
+            aPressed = 0;
+        }
+
+        o.position.z += speed;
+        if (o.position.z >= 5) {
+            scene.remove(o);
+            object.splice(index, 1);
+        }
+    });
+
+    if (obj[obj.length - 1].position.z >= -80) {
+        randCube();
+    }
+    // speed += 0.1;
     renderer.render(scene, camera);
     requestAnimationFrame(mainLoop);
 }
