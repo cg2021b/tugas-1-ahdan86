@@ -76,8 +76,8 @@ function createCube(color, locationX) {
 }
 
 function randCube() {
-    let amt = rand(1, 3);
-    for (let i = 0; i < amt; i++) {
+    let random = rand(1, 3);
+    for (let i = 0; i < random; i++) {
         cube = createCubeRand();
         // console.log("Masuk");
         obj.push(cube);
