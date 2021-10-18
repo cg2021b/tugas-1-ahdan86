@@ -2,6 +2,9 @@ import * as THREE from "./node_modules/three/src/Three.js";
 import { OrbitControls } from "./node_modules/three/examples/jsm/controls/OrbitControls.js";
 import { color, GUI } from "./node_modules/dat.gui/build/dat.gui.module.js";
 
+const SCORE = document.querySelector("#score");
+const MISS = document.querySelector("#miss");
+
 let scene, camera, renderer, canvas, cube, cubeR, cubeG, cubeB;
 let obj = [];
 let gameOver = 0,
@@ -189,12 +192,15 @@ let onKeyUp = function (e) {
 function collision(x, y, z) {
     if (x == cubeR.position.x && Math.abs(cubeR.position.z - z) < 3 && aPressed == 1) {
         score += 1;
+        SCORE.textContent = score;
         return true;
     } else if (x == cubeG.position.x && Math.abs(cubeG.position.z - z) < 3 && sPressed == 1) {
         score += 1;
+        SCORE.textContent = score;
         return true;
     } else if (x == cubeB.position.x && Math.abs(cubeB.position.z - z) < 3 && dPressed == 1) {
         score += 1;
+        SCORE.textContent = score;
         return true;
     }
 }
@@ -207,7 +213,10 @@ function mainLoop() {
         if (o.position.z >= 5 || status) {
             scene.remove(o);
             object.splice(index, 1);
-            if (!status) objectMiss += 1;
+            if (!status) {
+                objectMiss += 1;
+                MISS.textContent = objectMiss;
+            }
         }
     });
 
@@ -220,6 +229,8 @@ function mainLoop() {
     if (!gameOver) {
         renderer.render(scene, camera);
         requestAnimationFrame(mainLoop);
+    } else {
+        window.alert("GAME OVER!");
     }
 }
 
