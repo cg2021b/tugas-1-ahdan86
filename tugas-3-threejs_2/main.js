@@ -47,6 +47,7 @@ function main() {
     }
     {
         const cubeSize = 4;
+        const loader = new THREE.Loader();
         const cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
         const cubeMat = new THREE.MeshPhongMaterial({ color: "#8AC" });
         const mesh = new THREE.Mesh(cubeGeo, cubeMat);
