@@ -175,7 +175,6 @@ let onKeyDown = function (e) {
 
 let onKeyUp = function (e) {
     if (e.keyCode == 65) {
-        // cubeR.material.color.setHex(0xffffff);
         aPressed = 0;
         console.log("aUp");
     } else if (e.keyCode == 83) {
