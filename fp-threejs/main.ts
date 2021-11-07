@@ -48,13 +48,13 @@ let init = function () {
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
     camera.position.set(5, 5, 0);
 
-    const orbitControls = new OrbitControls(camera, renderer.domElement);
-    orbitControls.enableDamping = true;
-    orbitControls.minDistance = 5;
-    orbitControls.maxDistance = 15;
-    orbitControls.enablePan = false;
-    orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
-    orbitControls.update();
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.minDistance = 5;
+    controls.maxDistance = 15;
+    controls.enablePan = false;
+    controls.maxPolarAngle = Math.PI / 2 - 0.05;
+    controls.update();
 
     const color = 0xffffff;
     const intensity = 1;
@@ -67,6 +67,10 @@ let init = function () {
     //Load Model
     new GLTFLoader().load("./Soldier.glb", function (gltf) {
         const model = gltf.scene;
+        model.traverse(function (object: any) {
+            if (object.isMesh) object.castShadow = true;
+        });
+        scene.add(model);
     });
 
     //Key Control
